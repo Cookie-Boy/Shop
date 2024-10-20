@@ -14,9 +14,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     List<Transaction> findByAmountLessThanAndTransactionDateBetween(BigDecimal amount,
                                                                     LocalDateTime startDate,
                                                                     LocalDateTime endDate);
-    List<Transaction> findAllByOrderBytransactionDateAsc();
 
-    @Query("SELECT t FROM Transaction t WHERE DATE(t.transactionDate) = CURRENT_DATE")
+    @Query("SELECT t FROM Transaction t WHERE FUNCTION('DATE', t.transactionDate) = CURRENT_DATE")
     List<Transaction> findTransactionsForToday();
 
     @Query("SELECT t FROM Transaction t WHERE YEAR(t.transactionDate) = YEAR(CURRENT_DATE)")

@@ -32,46 +32,18 @@ public class TransactionService {
         return transactionRepository.findTransactionsForYear();
     }
 
+    public List<Transaction> getTransactionsWithAmountBelow(BigDecimal amount) {
+        return transactionRepository.findByAmountLessThan(amount);
+    }
+
+    public List<Transaction> getTransactionsWithAmountBelowAndRange(BigDecimal amount,
+                                                                    LocalDateTime startDate,
+                                                                    LocalDateTime endDate) {
+        return transactionRepository.findByAmountLessThanAndTransactionDateBetween(amount, startDate, endDate);
+    }
+
     public List<Transaction> getSellerTransactions(Long sellerId) {
         return transactionRepository.findAllBySellerId(sellerId);
-    }
-
-    public Seller getBestSeller(List<Transaction> transactions) {
-        HashMap<Seller, BigDecimal> sellersMap = new HashMap<>();
-        for (var transaction : transactions) {
-            Seller seller = transaction.getSeller();
-            if (sellersMap.containsKey(seller)) {
-                sellersMap.put(seller, sellersMap.get(seller).add(transaction.getAmount()));
-            }
-            sellersMap.put(seller, transaction.getAmount());
-        }
-        Seller bestSeller = null;
-        BigDecimal maxAmount = BigDecimal.valueOf(Integer.MIN_VALUE);
-        for (var pair : sellersMap.entrySet()) {
-            if (pair.getValue().compareTo(maxAmount) > 0) {
-                maxAmount = pair.getValue();
-                bestSeller = pair.getKey();
-            }
-        }
-        return bestSeller;
-    }
-
-    private List<Seller> getSellerSetAsList(List<Transaction> transactions) {
-        Set<Seller> sellerSet = new HashSet<>();
-        transactions.forEach(t -> sellerSet.add(t.getSeller()));
-        return new ArrayList<>(sellerSet);
-    }
-
-    public List<Seller> getSellersWithAmountLessThan(BigDecimal amount) {
-        List<Transaction> transactions = transactionRepository.findByAmountLessThan(amount);
-        return getSellerSetAsList(transactions);
-    }
-
-    public List<Seller> getSellersWithAmountLessThan(BigDecimal amount,
-                                                     LocalDateTime startDate,
-                                                     LocalDateTime endDate) {
-        List<Transaction> transactions = transactionRepository.findByAmountLessThanAndTransactionDateBetween(amount, startDate, endDate);
-        return getSellerSetAsList(transactions);
     }
 
     public Transaction getTransactionById(Long id) {
