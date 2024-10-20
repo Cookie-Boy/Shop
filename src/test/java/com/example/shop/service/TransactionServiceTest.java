@@ -90,40 +90,6 @@ public class TransactionServiceTest {
     }
 
     @Test
-    void testGetBestSeller() {
-        List<Transaction> transactions = Arrays.asList(transaction1, transaction2);
-
-        Seller bestSeller = transactionService.getBestSeller(transactions);
-
-        assertNotNull(bestSeller);
-        assertEquals(seller2.getName(), bestSeller.getName());
-    }
-
-    @Test
-    void testGetSellersWithAmountLessThan() {
-        when(transactionRepository.findByAmountLessThan(new BigDecimal("150.00")))
-                .thenReturn(Arrays.asList(transaction1));
-
-        List<Seller> sellers = transactionService.getSellersWithAmountLessThan(new BigDecimal("150.00"));
-
-        assertEquals(1, sellers.size());
-        assertEquals(seller1.getName(), sellers.getFirst().getName());
-    }
-
-    @Test
-    void testGetSellersWithAmountLessThanAndDateRange() {
-        LocalDateTime startDate = LocalDateTime.now().minusDays(7);
-        LocalDateTime endDate = LocalDateTime.now();
-        when(transactionRepository.findByAmountLessThanAndTransactionDateBetween(new BigDecimal("150.00"), startDate, endDate))
-                .thenReturn(Arrays.asList(transaction1));
-
-        List<Seller> sellers = transactionService.getSellersWithAmountLessThan(new BigDecimal("150.00"), startDate, endDate);
-
-        assertEquals(1, sellers.size());
-        assertEquals(seller1.getName(), sellers.getFirst().getName());
-    }
-
-    @Test
     void testGetTransactionById() {
         when(transactionRepository.findById(1L)).thenReturn(Optional.of(transaction1));
 

@@ -2,14 +2,13 @@ package com.example.shop.controller;
 
 import com.example.shop.model.Seller;
 import com.example.shop.service.AnalyticsService;
+import com.example.shop.service.SellerService;
 import com.example.shop.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,7 +20,16 @@ public class AnalyticsController {
     private AnalyticsService analyticsService;
 
     @Autowired
+    private SellerService sellerService;
+
+    @Autowired
     private TransactionService transactionService;
+
+    @GetMapping("/best-day/{sellerId}")
+    public LocalDate getBestDayForSeller(@PathVariable Long sellerId) {
+        Seller seller = sellerService.getSellerById(sellerId);
+        return analyticsService.getBestDayForSeller(seller);
+    }
 
     @GetMapping("/best-seller")
     public Seller getBestSeller() {
