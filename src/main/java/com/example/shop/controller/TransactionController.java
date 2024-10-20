@@ -1,13 +1,10 @@
 package com.example.shop.controller;
 
-import com.example.shop.model.Seller;
 import com.example.shop.model.Transaction;
 import com.example.shop.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -37,5 +34,13 @@ public class TransactionController {
         return transactionService.createTransaction(transaction);
     }
 
+    @PostMapping("/{id}/update")
+    public Transaction updateTransaction(@PathVariable Long id, @RequestBody Transaction transaction) {
+        return transactionService.updateTransaction(id, transaction);
+    }
 
+    @PostMapping("/{id}/delete")
+    public void deleteTransaction(@PathVariable Long id) {
+        transactionService.deleteTransactionById(id);
+    }
 }

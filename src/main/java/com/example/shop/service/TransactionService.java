@@ -1,8 +1,8 @@
 package com.example.shop.service;
 
-import com.example.shop.model.Seller;
 import com.example.shop.model.Transaction;
 import com.example.shop.repository.TransactionRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,18 +47,43 @@ public class TransactionService {
     }
 
     public Transaction getTransactionById(Long id) {
-        return transactionRepository.findById(id).orElse(null);
+        return transactionRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Transaction not found with id: " + id));
     }
 
     public Transaction createTransaction(Transaction transaction) {
+        if (transaction == null) {
+            throw new IllegalArgumentException("Transaction cannot be null");
+        }
+        if (transaction.getSeller() == null) {
+            throw new IllegalArgumentException("Seller cannot be null");
+        }
         return transactionRepository.save(transaction);
     }
 
+    public Transaction updateTransaction(Long id, Transaction updatedTransaction) {
+        Transaction existingTransaction = transactionRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Transaction not found with id: " + id));
+
+        existingTransaction.setAmount(updatedTransaction.getAmount());
+        existingTransaction.setSeller(updatedTransaction.getSeller());
+        existingTransaction.setTransactionDate(updatedTransaction.getTransactionDate());
+        existingTransaction.setPaymentType(updatedTransaction.getPaymentType());
+
+        return transactionRepository.save(existingTransaction);
+    }
+
     public void deleteTransaction(Transaction transaction) {
+        if (transaction == null) {
+            throw new IllegalArgumentException("Transaction cannot be null");
+        }
         transactionRepository.delete(transaction);
     }
 
     public void deleteTransactionById(Long id) {
+        if (!transactionRepository.existsById(id)) {
+            throw new IllegalArgumentException("Transaction not found with id: " + id);
+        }
         transactionRepository.deleteById(id);
     }
 }
